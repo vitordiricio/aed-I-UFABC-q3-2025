@@ -3,137 +3,130 @@
 #include <string.h>
 #include <limits.h>
 
-#define MAX_NAME_LEN 100
-#define NO_TIME LONG_MAX
+#define TAM_MAX_NOME 100
+#define SEM_TEMPO LONG_MAX
 
 typedef struct {
-    char name[MAX_NAME_LEN];
-    long totalTime;
-    int originalIndex;
-} Athlete;
+    char nome[TAM_MAX_NOME];
+    long tempoTotal;
+    int indiceOriginal;
+} Atleta;
 
-long calculateTime(int min, int seg, int cent) {
+long calcularTempo(int min, int seg, int cent) {
     if (min == 0 && seg == 0 && cent == 0) {
-        return NO_TIME;
+        return SEM_TEMPO;
     }
     return (long)min * 60 * 100 + (long)seg * 100 + (long)cent;
 }
 
-int compareAthletes(const void *a, const void *b) {
-    Athlete *athleteA = (Athlete *)a;
-    Athlete *athleteB = (Athlete *)b;
+int compararAtletas(const void *a, const void *b) {
+    Atleta *atA = (Atleta *)a;
+    Atleta *atB = (Atleta *)b;
 
-    if (athleteA->totalTime < athleteB->totalTime) {
-        return -1;
-    } else if (athleteA->totalTime > athleteB->totalTime) {
-        return 1;
-    } else {
-        return athleteA->originalIndex - athleteB->originalIndex;
-    }
+    if (atA->tempoTotal < atB->tempoTotal) return -1;
+    if (atA->tempoTotal > atB->tempoTotal) return 1;
+
+    return atA->indiceOriginal - atB->indiceOriginal;
 }
 
-void assignAndPrintLanes(Athlete heatAthletes[], int heatSize, int numLanes) {
-    int centerLane = (numLanes + 1) / 2;
-    int athleteIndexInHeat = heatSize - 1;
-    int currentRank = 0;
-    int rightOffset = 1;
-    int leftOffset = -1;
+void distribuirEImprimirRaias(Atleta serieAtletas[], int tamSerie, int numRaias) {
+    int raiaCentral = (numRaias + 1) / 2;
+    int idxAtleta = tamSerie - 1;
+    int colocado = 0;
+    int deslocDir = 1;
+    int deslocEsq = -1;
 
-    if (currentRank < heatSize) {
-        printf("Raia %d: %s\n", centerLane, heatAthletes[athleteIndexInHeat - currentRank].name);
-        currentRank++;
+    if (colocado < tamSerie) {
+        printf("Raia %d: %s\n", raiaCentral, serieAtletas[idxAtleta - colocado].nome);
+        colocado++;
     }
 
-    while (currentRank < heatSize) {
-        int rightLane = centerLane + rightOffset;
-        if (rightLane <= numLanes && currentRank < heatSize) {
-            printf("Raia %d: %s\n", rightLane, heatAthletes[athleteIndexInHeat - currentRank].name);
-            currentRank++;
+    while (colocado < tamSerie) {
+        int raiaDir = raiaCentral + deslocDir;
+        if (raiaDir <= numRaias && colocado < tamSerie) {
+            printf("Raia %d: %s\n", raiaDir, serieAtletas[idxAtleta - colocado].nome);
+            colocado++;
         }
-        rightOffset++;
+        deslocDir++;
 
-        int leftLane = centerLane + leftOffset;
-        if (leftLane >= 1 && currentRank < heatSize) {
-            printf("Raia %d: %s\n", leftLane, heatAthletes[athleteIndexInHeat - currentRank].name);
-            currentRank++;
+        int raiaEsq = raiaCentral + deslocEsq;
+        if (raiaEsq >= 1 && colocado < tamSerie) {
+            printf("Raia %d: %s\n", raiaEsq, serieAtletas[idxAtleta - colocado].nome);
+            colocado++;
         }
-        leftOffset--;
+        deslocEsq--;
     }
 }
 
 int main() {
-    int numLanes, numAthletes;
-    scanf("%d", &numLanes);
-    scanf("%d", &numAthletes);
+    int numRaias, numAtletas;
+    scanf("%d", &numRaias);
+    scanf("%d", &numAtletas);
 
-    Athlete *allAthletes = (Athlete *) malloc(numAthletes * sizeof(Athlete));
-    if (allAthletes == NULL) {
-        return 1;
-    }
+    Atleta *todos = (Atleta *) malloc(numAtletas * sizeof(Atleta));
+    if (todos == NULL) return 1;
 
-    for (int i = 0; i < numAthletes; i++) {
+    for (int i = 0; i < numAtletas; i++) {
         int min, seg, cent;
-        scanf("%s %d %d %d", allAthletes[i].name, &min, &seg, &cent);
-        allAthletes[i].totalTime = calculateTime(min, seg, cent);
-        allAthletes[i].originalIndex = i;
+        scanf("%s %d %d %d", todos[i].nome, &min, &seg, &cent);
+        todos[i].tempoTotal = calcularTempo(min, seg, cent);
+        todos[i].indiceOriginal = i;
     }
 
-    qsort(allAthletes, numAthletes, sizeof(Athlete), compareAthletes);
+    qsort(todos, numAtletas, sizeof(Atleta), compararAtletas);
 
-    int numSeries = (numAthletes + numLanes - 1) / numLanes;
-    int *seriesSizes = (int *) malloc(numSeries * sizeof(int));
-    if (seriesSizes == NULL) {
-        free(allAthletes);
+    int numSeries = (numAtletas + numRaias - 1) / numRaias;
+    int *tamanhos = (int *) malloc(numSeries * sizeof(int));
+    if (tamanhos == NULL) {
+        free(todos);
         return 1;
     }
 
-    int athletesInFirstSeries = numAthletes % numLanes;
-    if (athletesInFirstSeries == 0 && numAthletes > 0) {
-        athletesInFirstSeries = numLanes;
+    int atletasPrimeira = numAtletas % numRaias;
+    if (atletasPrimeira == 0 && numAtletas > 0) {
+        atletasPrimeira = numRaias;
     }
 
     for (int i = 0; i < numSeries; i++) {
-        seriesSizes[i] = numLanes;
-    }
-    
-    if (athletesInFirstSeries > 0) {
-        seriesSizes[0] = athletesInFirstSeries;
+        tamanhos[i] = numRaias;
     }
 
-    if (numSeries > 1 && seriesSizes[0] < 3) {
-        int numToMove = 3 - seriesSizes[0];
-        seriesSizes[0] = 3;
-        seriesSizes[1] -= numToMove;
+    tamanhos[0] = atletasPrimeira;
+
+    if (numSeries > 1 && tamanhos[0] < 3) {
+        int mover = 3 - tamanhos[0];
+        tamanhos[0] = 3;
+        tamanhos[1] -= mover;
     }
 
     printf("%d %s\n", numSeries, (numSeries > 1) ? "series" : "serie");
 
-    int athleteIndex = numAthletes - 1;
+    int idx = numAtletas - 1;
+
     for (int s = 0; s < numSeries; s++) {
         printf("%da. serie:\n", s + 1);
 
-        int currentHeatSize = seriesSizes[s];
-        Athlete *heatAthletes = (Athlete *) malloc(currentHeatSize * sizeof(Athlete));
-        
-        if (heatAthletes == NULL) {
-            free(allAthletes);
-            free(seriesSizes);
+        int tamAtual = tamanhos[s];
+        Atleta *atletasSerie = (Atleta *) malloc(tamAtual * sizeof(Atleta));
+        if (atletasSerie == NULL) {
+            free(todos);
+            free(tamanhos);
             return 1;
         }
 
-        for (int i = 0; i < currentHeatSize; i++) {
-            if(athleteIndex >= 0) {
-                 heatAthletes[i] = allAthletes[athleteIndex];
-                 athleteIndex--;
+        for (int i = 0; i < tamAtual; i++) {
+            if (idx >= 0) {
+                atletasSerie[i] = todos[idx];
+                idx--;
             }
         }
 
-        assignAndPrintLanes(heatAthletes, currentHeatSize, numLanes);
-        free(heatAthletes);
+        distribuirEImprimirRaias(atletasSerie, tamAtual, numRaias);
+        free(atletasSerie);
     }
 
-    free(allAthletes);
-    free(seriesSizes);
+    free(todos);
+    free(tamanhos);
 
     return 0;
 }

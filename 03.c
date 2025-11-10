@@ -1,10 +1,8 @@
-// Faça um programa que recebe um inteiro como entrada e imprime o seu valor na tela.
 #include <stdio.h>
 
 int main(void) {
-    int num;
-    printf("Entrada: ");
-    scanf("%d", &num);
-    printf("Saída: %d", num);
+    long long num;
+    scanf("%lld", &num);
+    printf("%lld", num);
     return 0;
 }

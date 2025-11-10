@@ -2,139 +2,139 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define MAX_WORD_LEN 101
+#define TAM_MAX_PALAVRA 101
 
 typedef struct tItem {
-    char key[MAX_WORD_LEN];
-    int count;
-    struct tItem *prev;
-    struct tItem *next;
+    char chave[TAM_MAX_PALAVRA];
+    int contagem;
+    struct tItem *ant;
+    struct tItem *prox;
 } Item;
 
 typedef struct tLista {
-    Item *first;
-    Item *last;
+    Item *primeiro;
+    Item *ultimo;
 } Lista;
 
-Lista * createEmptyList() {
-    Lista *list = (Lista *) malloc(sizeof(Lista));
-    if (list != NULL) {
-        list->first = NULL;
-        list->last = NULL;
+Lista *criarListaVazia() {
+    Lista *lista = (Lista *) malloc(sizeof(Lista));
+    if (lista != NULL) {
+        lista->primeiro = NULL;
+        lista->ultimo = NULL;
     }
-    return list;
+    return lista;
 }
 
-Item * createItem(char *word) {
+Item *criarItem(char *palavra) {
     Item *item = (Item *) malloc(sizeof(Item));
     if (item != NULL) {
-        strcpy(item->key, word);
-        item->count = 1;
-        item->prev = NULL;
-        item->next = NULL;
+        strcpy(item->chave, palavra);
+        item->contagem = 1;
+        item->ant = NULL;
+        item->prox = NULL;
     }
     return item;
 }
 
-void freeList(Lista *list) {
-    if (list == NULL) {
+void liberarLista(Lista *lista) {
+    if (lista == NULL) {
         return;
     }
-    Item *current = list->first;
+    Item *atual = lista->primeiro;
     Item *temp;
-    while (current != NULL) {
-        temp = current;
-        current = current->next;
+    while (atual != NULL) {
+        temp = atual;
+        atual = atual->prox;
         free(temp);
     }
-    free(list);
+    free(lista);
 }
 
-Item * findItem(Lista *list, char *word) {
-    Item *current = list->first;
-    while (current != NULL) {
-        if (strcmp(current->key, word) == 0) {
-            return current;
+Item *buscarItem(Lista *lista, char *palavra) {
+    Item *atual = lista->primeiro;
+    while (atual != NULL) {
+        if (strcmp(atual->chave, palavra) == 0) {
+            return atual;
         }
-        current = current->next;
+        atual = atual->prox;
     }
     return NULL;
 }
 
-void promoteItem(Lista *list, Item *item) {
-    while (item->prev != NULL && item->count > item->prev->count) {
-        Item *prevItem = item->prev;
+void promoverItem(Lista *lista, Item *item) {
+    while (item->ant != NULL && item->contagem > item->ant->contagem) {
+        Item *itemAnt = item->ant;
 
-        prevItem->next = item->next;
-        item->prev = prevItem->prev;
+        itemAnt->prox = item->prox;
+        item->ant = itemAnt->ant;
 
-        if (item->next != NULL) {
-            item->next->prev = prevItem;
+        if (item->prox != NULL) {
+            item->prox->ant = itemAnt;
         }
 
-        if (prevItem->prev != NULL) {
-            prevItem->prev->next = item;
+        if (itemAnt->ant != NULL) {
+            itemAnt->ant->prox = item;
         }
 
-        item->next = prevItem;
-        prevItem->prev = item;
+        item->prox = itemAnt;
+        itemAnt->ant = item;
 
-        if (list->first == prevItem) {
-            list->first = item;
+        if (lista->primeiro == itemAnt) {
+            lista->primeiro = item;
         }
-        if (list->last == item) {
-            list->last = prevItem;
+        if (lista->ultimo == item) {
+            lista->ultimo = itemAnt;
         }
     }
 }
 
-void processSearch(Lista *list, char *word) {
-    Item *foundItem = findItem(list, word);
+void processarBusca(Lista *lista, char *palavra) {
+    Item *encontrado = buscarItem(lista, palavra);
 
-    if (foundItem != NULL) {
-        foundItem->count++;
-        promoteItem(list, foundItem);
+    if (encontrado != NULL) {
+        encontrado->contagem++;
+        promoverItem(lista, encontrado);
     } else {
-        Item *newItem = createItem(word);
-        if (newItem == NULL) {
+        Item *novo = criarItem(palavra);
+        if (novo == NULL) {
             return;
         }
 
-        if (list->first == NULL) {
-            list->first = newItem;
-            list->last = newItem;
+        if (lista->primeiro == NULL) {
+            lista->primeiro = novo;
+            lista->ultimo = novo;
         } else {
-            list->last->next = newItem;
-            newItem->prev = list->last;
-            list->last = newItem;
+            lista->ultimo->prox = novo;
+            novo->ant = lista->ultimo;
+            lista->ultimo = novo;
         }
     }
 }
 
-void printList(Lista *list) {
-    if (list == NULL) {
+void imprimirLista(Lista *lista) {
+    if (lista == NULL) {
         return;
     }
-    Item *current = list->first;
-    while (current != NULL) {
-        printf("%s [%d]\n", current->key, current->count);
-        current = current->next;
+    Item *atual = lista->primeiro;
+    while (atual != NULL) {
+        printf("%s [%d]\n", atual->chave, atual->contagem);
+        atual = atual->prox;
     }
 }
 
 int main() {
-    char word[MAX_WORD_LEN];
-    Lista *list = createEmptyList();
-    if (list == NULL) {
+    char palavra[TAM_MAX_PALAVRA];
+    Lista *lista = criarListaVazia();
+    if (lista == NULL) {
         return 1;
     }
 
-    while (scanf("%s", word) != EOF) {
-        processSearch(list, word);
+    while (scanf("%s", palavra) != EOF) {
+        processarBusca(lista, palavra);
     }
 
-    printList(list);
-    freeList(list);
+    imprimirLista(lista);
+    liberarLista(lista);
 
     return 0;
 }

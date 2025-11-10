@@ -36,11 +36,11 @@ void liberaLista(Lista *lista) {
     if (lista == NULL) {
         return;
     }
-    Item *current = lista->primeiro;
+    Item *atual = lista->primeiro;
     Item *temp;
-    while (current != NULL) {
-        temp = current;
-        current = current->prox;
+    while (atual != NULL) {
+        temp = atual;
+        atual = atual->prox;
         free(temp);
     }
     free(lista);
@@ -57,10 +57,10 @@ void imprimir(Lista *lista) {
     if (lista == NULL) {
         return;
     }
-    Item *current = lista->primeiro;
-    while (current != NULL) {
-        printf("%s [%d]\n", current->nome, current->rank);
-        current = current->prox;
+    Item *atual = lista->primeiro;
+    while (atual != NULL) {
+        printf("%s [%d]\n", atual->nome, atual->rank);
+        atual = atual->prox;
     }
 }
 
@@ -68,12 +68,12 @@ Item * buscaNome(Lista *lista, char *x) {
     if (lista == NULL) {
         return NULL;
     }
-    Item *current = lista->primeiro;
-    while (current != NULL) {
-        if (strcmp(current->nome, x) == 0) {
-            return current;
+    Item *atual = lista->primeiro;
+    while (atual != NULL) {
+        if (strcmp(atual->nome, x) == 0) {
+            return atual;
         }
-        current = current->prox;
+        atual = atual->prox;
     }
     return NULL;
 }
@@ -110,18 +110,18 @@ void inserir(Lista *lista, char *s) {
     Item *item = buscaNome(lista, s);
 
     if (item == NULL) {
-        Item *newItem = criaItem(s);
-        if (newItem == NULL) {
+        Item *novo = criaItem(s);
+        if (novo == NULL) {
             return;
         }
 
         if (vazia(lista)) {
-            lista->primeiro = newItem;
-            lista->ultimo = newItem;
+            lista->primeiro = novo;
+            lista->ultimo = novo;
         } else {
-            lista->ultimo->prox = newItem;
-            newItem->ant = lista->ultimo;
-            lista->ultimo = newItem;
+            lista->ultimo->prox = novo;
+            novo->ant = lista->ultimo;
+            lista->ultimo = novo;
         }
     } else {
         item->rank++;
@@ -137,13 +137,13 @@ int main() {
     if (lista == NULL) {
         return 1;
     }
-    
+
     while (scanf("%s", s) != EOF) {
         inserir(lista, s);
     }
-    
+
     imprimir(lista);
     liberaLista(lista);
-    
+
     return 0;
 }

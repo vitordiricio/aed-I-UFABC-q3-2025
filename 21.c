@@ -1,32 +1,32 @@
 #include <stdio.h>
 
-int findMMC(int a, int b) {
-    int remainder;
+int findMDC(int a, int b) {
+    int aux;
     while (b != 0) {
-        remainder = a % b;
+        aux = a % b;
         a = b;
-        b = remainder;
+        b = aux;
     }
     return a;
 }
 
-int findLCM(int a, int b) {
+int findMMC(int a, int b) {
     if (a == 0 || b == 0) {
         return 0;
     }
     
-    return (a / findGCD(a, b)) * b;
+    return (a / findMDC(a, b)) * b;
 }
 
 int main() {
     int a, b;
-    int lcm;
+    int mmc;
 
     scanf("%d %d", &a, &b);
 
-    lcm = findMMC(a, b);
+    mmc = findMMC(a, b);
 
-    printf("%d\n", lcm);
+    printf("%d\n", mmc);
 
     return 0;
 }

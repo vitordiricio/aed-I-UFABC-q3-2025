@@ -33,35 +33,35 @@ void liberaPilha(Pilha *pilha) {
     if (pilha == NULL) {
         return;
     }
-    Item *current = pilha->topo;
+    Item *atual = pilha->topo;
     Item *temp;
-    while (current != NULL) {
-        temp = current;
-        current = current->prox;
+    while (atual != NULL) {
+        temp = atual;
+        atual = atual->prox;
         free(temp);
     }
     free(pilha);
 }
 
-int vazia(Pilha *pilha) {
+int estaVazia(Pilha *pilha) {
     if (pilha == NULL) {
         return 1;
     }
     return (pilha->topo == NULL);
 }
 
-void imprimir(Pilha *pilha) {
-    if (vazia(pilha)) {
+void imprimePilha(Pilha *pilha) {
+    if (estaVazia(pilha)) {
         return;
     }
 
-    Item *current = pilha->topo;
-    while (current != NULL) {
-        printf("%d", current->chave);
-        if (current->prox != NULL) {
+    Item *atual = pilha->topo;
+    while (atual != NULL) {
+        printf("%d", atual->chave);
+        if (atual->prox != NULL) {
             printf(" ");
         }
-        current = current->prox;
+        atual = atual->prox;
     }
     printf("\n");
 }
@@ -70,29 +70,29 @@ void empilha(Pilha *pilha, int x) {
     if (pilha == NULL) {
         return;
     }
-    Item *newItem = criaItem(x);
-    if (newItem == NULL) {
+    Item *novoItem = criaItem(x);
+    if (novoItem == NULL) {
         return;
     }
 
-    newItem->prox = pilha->topo;
-    pilha->topo = newItem;
+    novoItem->prox = pilha->topo;
+    pilha->topo = novoItem;
     pilha->quantidade++;
 }
 
 int desempilha(Pilha *pilha) {
-    if (vazia(pilha)) {
+    if (estaVazia(pilha)) {
         return -1;
     }
 
     Item *temp = pilha->topo;
-    int poppedKey = temp->chave;
+    int chaveRemovida = temp->chave;
 
     pilha->topo = temp->prox;
     pilha->quantidade--;
     free(temp);
 
-    return poppedKey;
+    return chaveRemovida;
 }
 
 int main() {
@@ -110,17 +110,17 @@ int main() {
                 empilha(pilha, x);
                 break;
             case 'D': ;
-                int poppedValue = desempilha(pilha);
-                if (poppedValue != -1) {
-                    printf("[%d]\n", poppedValue);
+                int valorRemovido = desempilha(pilha);
+                if (valorRemovido != -1) {
+                    printf("[%d]\n", valorRemovido);
                 }
                 break;
             case 'M':
-                imprimir(pilha);
+                imprimePilha(pilha);
                 break;
         }
     }
-    
+
     liberaPilha(pilha);
     return 0;
 }

@@ -32,74 +32,74 @@ void liberaFila(Fila *fila) {
     if (fila == NULL) {
         return;
     }
-    Item *current = fila->inicio;
+    Item *atual = fila->inicio;
     Item *temp;
-    while (current != NULL) {
-        temp = current;
-        current = current->prox;
+    while (atual != NULL) {
+        temp = atual;
+        atual = atual->prox;
         free(temp);
     }
     free(fila);
 }
 
-int vazia(Fila *fila) {
+int estaVazia(Fila *fila) {
     if (fila == NULL) {
         return 1;
     }
     return (fila->inicio == NULL);
 }
 
-void imprimir(Fila *fila) {
-    if (vazia(fila)) {
+void imprimeFila(Fila *fila) {
+    if (estaVazia(fila)) {
         return;
     }
 
-    Item *current = fila->inicio;
-    while (current != NULL) {
-        printf("%d", current->chave);
-        if (current->prox != NULL) {
+    Item *atual = fila->inicio;
+    while (atual != NULL) {
+        printf("%d", atual->chave);
+        if (atual->prox != NULL) {
             printf(" ");
         }
-        current = current->prox;
+        atual = atual->prox;
     }
     printf("\n");
 }
 
-void enfileirar(Fila *fila, int x) {
+void enfileira(Fila *fila, int x) {
     if (fila == NULL) {
         return;
     }
 
-    Item *newItem = criaItem(x);
-    if (newItem == NULL) {
+    Item *novoItem = criaItem(x);
+    if (novoItem == NULL) {
         return;
     }
 
-    if (vazia(fila)) {
-        fila->inicio = newItem;
-        fila->fim = newItem;
+    if (estaVazia(fila)) {
+        fila->inicio = novoItem;
+        fila->fim = novoItem;
     } else {
-        fila->fim->prox = newItem;
-        fila->fim = newItem;
+        fila->fim->prox = novoItem;
+        fila->fim = novoItem;
     }
 }
 
-int desenfileirar(Fila *fila) {
-    if (vazia(fila)) {
+int desenfileira(Fila *fila) {
+    if (estaVazia(fila)) {
         return -1;
     }
 
     Item *temp = fila->inicio;
-    int dequeuedKey = temp->chave;
+    int chaveRemovida = temp->chave;
 
     fila->inicio = temp->prox;
-    
+
     if (fila->inicio == NULL) {
         fila->fim = NULL;
     }
 
     free(temp);
-    return dequeuedKey;
+    return chaveRemovida;
 }
 
 int main() {
@@ -114,20 +114,20 @@ int main() {
         switch (op) {
             case 'E':
                 scanf("%d", &x);
-                enfileirar(fila, x);
+                enfileira(fila, x);
                 break;
             case 'D': ;
-                int dequeuedValue = desenfileirar(fila);
-                if (dequeuedValue != -1) {
-                    printf("<%d>\n", dequeuedValue);
+                int valorRemovido = desenfileira(fila);
+                if (valorRemovido != -1) {
+                    printf("<%d>\n", valorRemovido);
                 }
                 break;
             case 'M':
-                imprimir(fila);
+                imprimeFila(fila);
                 break;
         }
     }
-    
+
     liberaFila(fila);
     return 0;
 }

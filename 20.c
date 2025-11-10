@@ -12,13 +12,13 @@ int findMDC(int a, int b) {
 
 int main() {
     int a, b;
-    int gcd;
+    int mdc;
 
     scanf("%d %d", &a, &b);
 
-    gcd = findMDC(a, b);
+    mdc = findMDC(a, b);
 
-    printf("%d\n", gcd);
+    printf("%d\n", mdc);
 
     return 0;
 }

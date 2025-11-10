@@ -35,45 +35,45 @@ void liberaLista(Lista *lista) {
     if (lista == NULL) {
         return;
     }
-    Item *current = lista->primeiro;
+    Item *atual = lista->primeiro;
     Item *temp;
-    while (current != NULL) {
-        temp = current;
-        current = current->prox;
+    while (atual != NULL) {
+        temp = atual;
+        atual = atual->prox;
         free(temp);
     }
     free(lista);
 }
 
-int vazia(Lista *lista) {
+int estaVazia(Lista *lista) {
     if (lista == NULL) {
         return 1;
     }
     return (lista->primeiro == NULL);
 }
 
-void imprimir(Lista *lista) {
+void imprimeLista(Lista *lista) {
     if (lista == NULL) {
         printf("\n");
         return;
     }
-    Item *current = lista->primeiro;
-    while (current != NULL) {
-        printf("%d ", current->chave);
-        current = current->prox;
+    Item *atual = lista->primeiro;
+    while (atual != NULL) {
+        printf("%d ", atual->chave);
+        atual = atual->prox;
     }
     printf("\n");
 }
 
-void imprimirReverso(Lista *lista) {
+void imprimeListaReversa(Lista *lista) {
     if (lista == NULL) {
         printf("\n");
         return;
     }
-    Item *current = lista->ultimo;
-    while (current != NULL) {
-        printf("%d ", current->chave);
-        current = current->ant;
+    Item *atual = lista->ultimo;
+    while (atual != NULL) {
+        printf("%d ", atual->chave);
+        atual = atual->ant;
     }
     printf("\n");
 }
@@ -83,70 +83,70 @@ void inserir(Lista *lista, int x) {
         return;
     }
 
-    Item *newItem = criaItem(x);
-    if (newItem == NULL) {
+    Item *novoItem = criaItem(x);
+    if (novoItem == NULL) {
         return;
     }
 
-    Item *current = lista->primeiro;
-    Item *previous = NULL;
+    Item *atual = lista->primeiro;
+    Item *anterior = NULL;
 
-    while (current != NULL && current->chave < x) {
-        previous = current;
-        current = current->prox;
+    while (atual != NULL && atual->chave < x) {
+        anterior = atual;
+        atual = atual->prox;
     }
 
-    if (current != NULL && current->chave == x) {
-        free(newItem);
+    if (atual != NULL && atual->chave == x) {
+        free(novoItem);
         return;
     }
 
-    newItem->prox = current;
-    newItem->ant = previous;
+    novoItem->prox = atual;
+    novoItem->ant = anterior;
 
-    if (previous == NULL) {
-        lista->primeiro = newItem;
+    if (anterior == NULL) {
+        lista->primeiro = novoItem;
     } else {
-        previous->prox = newItem;
+        anterior->prox = novoItem;
     }
 
-    if (current == NULL) {
-        lista->ultimo = newItem;
+    if (atual == NULL) {
+        lista->ultimo = novoItem;
     } else {
-        current->ant = newItem;
+        atual->ant = novoItem;
     }
 
     lista->quantidade++;
 }
 
 void remover(Lista *lista, int x) {
-    if (lista == NULL || vazia(lista)) {
+    if (lista == NULL || estaVazia(lista)) {
         return;
     }
 
-    Item *current = lista->primeiro;
+    Item *atual = lista->primeiro;
 
-    while (current != NULL && current->chave < x) {
-        current = current->prox;
+    while (atual != NULL && atual->chave < x) {
+        atual = atual->prox;
     }
 
-    if (current == NULL || current->chave != x) {
+    if (atual == NULL || atual->chave != x) {
         return;
     }
 
-    if (current->ant == NULL) {
-        lista->primeiro = current->prox;
+    if (atual->ant == NULL) {
+        lista->primeiro = atual->prox;
     } else {
-        current->ant->prox = current->prox;
+        atual->ant->prox = atual->prox;
     }
 
-    if (current->prox == NULL) {
-        lista->ultimo = current->ant;
+    if (atual->prox == NULL) {
+        lista->ultimo = atual->ant;
     } else {
-        current->prox->ant = current->ant;
+        atual->prox->ant = atual->ant;
     }
 
-    free(current);
+    free(atual);
     lista->quantidade--;
 }
 
@@ -169,10 +169,10 @@ int main() {
                 remover(lista, x);
                 break;
             case 'M':
-                imprimir(lista);
+                imprimeLista(lista);
                 break;
             case 'R':
-                imprimirReverso(lista);
+                imprimeListaReversa(lista);
                 break;
         }
     }
