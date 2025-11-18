@@ -165,28 +165,44 @@ void rotacaoDireita(Arvore *arv, No *y) {
     atualizaAltura(x);
 }
 
+void atualizaAlturasAteRaiz(No *no) {
+    while (no != NULL) {
+        atualizaAltura(no);
+        no = no->pai;
+    }
+}
+
 void balancearNo(Arvore *arv, No *no) {
     int fb = fatorBalanceamento(no);
+    No *novoPai = NULL;
     printf("Balanceamento: %d\n", no->chave);
 
     if (fb < -1) {
         if (fatorBalanceamento(no->dir) <= 0) {
             printf("Caso 1\n");
+            novoPai = no->dir;
             rotacaoEsquerda(arv, no);
         } else {
             printf("Caso 2\n");
+            novoPai = no->dir->esq;
             rotacaoDireita(arv, no->dir);
             rotacaoEsquerda(arv, no);
         }
     } else if (fb > 1) {
         if (fatorBalanceamento(no->esq) >= 0) {
             printf("Caso 3\n");
+            novoPai = no->esq;
             rotacaoDireita(arv, no);
         } else {
             printf("Caso 4\n");
+            novoPai = no->esq->dir;
             rotacaoEsquerda(arv, no->esq);
             rotacaoDireita(arv, no);
         }
+    }
+    
+    if (novoPai != NULL) {
+        atualizaAlturasAteRaiz(novoPai);
     }
 }
 
@@ -220,11 +236,9 @@ void imprimirRec(No *no) {
     
     imprimirRec(no->esq);
     
-    printf("%d[h=%d; fb=%d; pai=", no->chave, no->altura, fatorBalanceamento(no));
-    if (no->pai == NULL) {
-        printf("NULL;");
-    } else {
-        printf("%d;", no->pai->chave);
+    printf("%d[h=%d; fb=%d;", no->chave, no->altura, fatorBalanceamento(no));
+    if (no->pai != NULL) {
+        printf(" pai=%d;", no->pai->chave);
     }
     if (no->esq != NULL) {
         printf(" esq=%d;", no->esq->chave);
@@ -262,7 +276,6 @@ int main () {
         balancearNo(arv, noDesb);
     }
     
-    atualizaAlturasFB(arv->raiz);
     imprimir(arv);
     
     liberaArvore (arv);
